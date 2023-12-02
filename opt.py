@@ -1,7 +1,7 @@
 from typing import Iterable, Tuple
 
 
-def opt_cache_simulation(cache_size: int, request_trace: Iterable[int]) -> int:
+def opt_cache_simulation(request_trace: Iterable[int], cache_size: int,) -> int:
     """
     Returns optimal number of cache misses for a given request trace and cache size
 
