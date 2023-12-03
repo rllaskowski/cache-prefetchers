@@ -24,33 +24,13 @@ class ProbablistModel(abc.ABC):
         pass
 
 
-class Prop(ProbablistModel):
-    def __init__(self):
-        super().__init__("Prop")
-        self.probabilities = {}  # Placeholder for storing probabilities
-
-    def get_least_probable(self, p=1):
-        # Return p least probable addresses (placeholder logic)
-        return sorted(self.probabilities, key=self.probabilities.get)[:p]
-
-    def get_most_probable(self, p=1):
-        # Return p most probable addresses (placeholder logic)
-        return sorted(self.probabilities, key=self.probabilities.get, reverse=True)[:p]
-
-    def on_read(self, address, is_hit):
-        # Update probabilities based on read (placeholder logic)
-        self.probabilities[address] = self.probabilities.get(address, 0) + (1 if is_hit else -1)
-
-
-
-
 
 class Markov(ProbablistModel):
     def __init__(self, t):
         super().__init__("Markov")
-        self.t = t  # Length of the transition history
-        self.transitions = {}  # Transition history and counts
-        self.current_state = deque(maxlen=t)  # Current state of length t
+        self.t = t
+        self.transitions = {}
+        self.current_state = deque(maxlen=t)
 
     def update_transition(self):
         if len(self.current_state) == self.t:
