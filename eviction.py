@@ -1,9 +1,11 @@
 import abc
+import random
 from collections import OrderedDict, deque
 from typing import List, Set
-from cache import Cache
+
 import scipy.optimize as opt
-import random
+
+from cache import Cache
 
 
 class EvictionStrategy(abc.ABC):

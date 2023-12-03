@@ -1,7 +1,8 @@
 import abc
+import heapq
 from collections import deque
 from typing import Tuple
-import heapq
+
 
 class PrefetchStrategy(abc.ABC):
     """Manages cache page prefetching."""

@@ -1,8 +1,8 @@
-from collections import deque
 import abc
-from cache import Cache
-from typing import List, Tuple, Set
+from collections import deque
+from typing import List, Set, Tuple
 
+from cache import Cache
 from ffm import FieldAwareFactorizationMachine, train_ffm
 
 
