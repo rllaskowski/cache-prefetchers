@@ -49,7 +49,7 @@ class Cache:
             else:
                 n_evicted = 0
 
-            assert len(self.cache) < self.size or n_evicted == None, f"{self.name} cache size exceeded"
+            assert len(self.cache) < self.size or n_evicted == None, f"{self.name} cache size exceede"
 
             if len(self.cache) == self.size - 1:
                 self.cache.add(address)
