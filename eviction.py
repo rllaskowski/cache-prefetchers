@@ -1,12 +1,12 @@
 import abc
 import random
 from collections import OrderedDict, defaultdict, deque
-from typing import List, Set
+from typing import List, Set, Optional, Tuple
 import math
 import scipy.optimize as opt
 import numpy as np
 import math
-from typing import List, Set, Tuple, Optional
+
 
 
 from cache import Cache
@@ -25,12 +25,12 @@ class EvictionStrategy(abc.ABC):
         """Returns a set of addresses to evict from the cache."""
         pass
 
-    def evict(self, cache: Cache, p=1) -> Optional[]:
+    def evict(self, cache: Cache, p=1) -> Optional[int]:
         """Evicts p pages from the cache."""
         pages = set(self._evict(cache, p))
 
         if pages == None:
-            return
+            return None
 
         assert (
             len(pages) == p
@@ -41,6 +41,8 @@ class EvictionStrategy(abc.ABC):
         ), f"{self.name} eviction strategy returned addresses not in cache"
 
         cache.cache -= pages
+
+        return pages
 
     def fetch_callback(self, cache: Cache, addresses: List[int]):
         """Called by cache when a page is fetched to the cache."""
