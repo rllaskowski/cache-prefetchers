@@ -6,8 +6,8 @@ commit_message="Automatyczny commit"
 # Ustaw nazwę gałęzi
 branch_name="main"
 
-# Obserwuj bieżący katalog i podkatalogi
-fswatch -o . | while read f
+# Obserwuj bieżący katalog i podkatalogi, ignorując experiments.ipynb
+fswatch -o -e "experiments.ipynb" . | while read f
 do
   git add -A
   git commit -m "$commit_message"
