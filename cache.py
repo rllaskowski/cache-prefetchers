@@ -45,6 +45,7 @@ class Cache:
         if not hit:
             if len(self.cache) == self.size:
                 n_evicted = self.evict(1, allow_non_eviction=True)
+            
 
             self.cache.add(address)
 
