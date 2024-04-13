@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+print(device)
 
 
 class FeaturesEmbedding(torch.nn.Module):
