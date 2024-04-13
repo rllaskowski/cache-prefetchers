@@ -84,12 +84,16 @@ class FieldAwareFactorizationMachineModel(torch.nn.Module):
         self.ffm = _FieldAwareFactorizationMachine(field_dims, embed_dim)
         self.n = field_dims[0]
 
+        self.to(device)
+
     def forward(self, x):
         """
         :param x: Long tensor of size ``(batch_size, num_fields)``
         """
         if not isinstance(x, torch.Tensor):
             x = torch.tensor(x, dtype=torch.long)
+
+        x.to(device)
         x = x % self.n
         ffm_term = torch.sum(torch.sum(self.ffm(x), dim=1), dim=1, keepdim=True)
         x = self.linear(x) + ffm_term
