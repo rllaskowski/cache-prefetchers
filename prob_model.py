@@ -54,6 +54,7 @@ class Markov(ProbablistModel):
 class FFM(ProbablistModel):
     def __init__(self, n, h=14, k=5, epochs=1, lr=0.01, wd=0.1, epoch_samples=20, my_ffm=False, allow_non_eviction=False):
         super().__init__("FFM")
+
         if my_ffm:
             self.ffm = FieldAwareFactorizationMachine(n, h + 2, k)
         else:
