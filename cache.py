@@ -13,8 +13,9 @@ class Cache:
         self.size = size
         self.history = []
 
-    def evict(self, p=1):
-        self.eviction_strategy.evict(self, p)
+    def evict(self, p=1, allow_non_eviction=False):
+        n_evicted = self.eviction_strategy.evict(self, p)
+        
 
 
     def prefetch(self, p=1):
