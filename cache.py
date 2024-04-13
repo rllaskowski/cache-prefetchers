@@ -1,4 +1,5 @@
 from calendar import c
+from operator import le
 from typing import List, Set, Tuple
 import copy
 
@@ -48,8 +49,9 @@ class Cache:
             else:
                 n_evicted = 0
 
+            assert len(self.cache) < self.size or n, f"{self.name} cache size exceeded"
 
-            if len(self.cache) == self.size - 1
+            if len(self.cache) == self.size - 1:
                 self.cache.add(address)
 
         self.eviction_strategy.read_callback(self, address, hit)
