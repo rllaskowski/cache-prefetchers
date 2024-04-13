@@ -71,7 +71,7 @@ class FFM(ProbablistModel):
         a = a % self.n
         b = b % self.n
 
-        current_state = [x[0] for x in cache.access_history[-self.h :]]
+        current_state = [x[0] % self.n for x in cache.access_history[-self.h :]]
         x = [a, b] + current_state
 
         return float(self.ffm(x).item())
@@ -80,7 +80,7 @@ class FFM(ProbablistModel):
         if len(cache.access_history) <= self.h:
             return [0.5] * len(ab)
 
-        current_state = [x[0] for x in cache.access_history[-self.h :]]
+        current_state = [x[0] % self.n for x in cache.access_history[-self.h :]]
         x = [[a, b] + current_state for a, b in ab]
         with torch.no_grad():
             self.ffm.eval()
