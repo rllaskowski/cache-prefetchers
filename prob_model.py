@@ -7,6 +7,7 @@ import torch
 from collections import deque
 from fieldfm import FieldAwareFactorizationMachine, train_ffm, FieldAwareFactorizationMachineModel
 from typing import List, Set, Tuple, Optional, Dict
+from torch import optim
 
 
 class ProbablistModel(abc.ABC):
@@ -67,6 +68,7 @@ class FFM(ProbablistModel):
         self.epoch_samples = epoch_samples
         self.occurences = {}
         self.losses = []
+        self.optimizer = optim.AdamW(ffm, lr=lr, weight_decay=wd)
 
     def get_probability(self, cache: Cache, a: int, b: int) -> float:
         a = a % self.n
