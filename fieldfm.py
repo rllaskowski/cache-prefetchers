@@ -23,7 +23,7 @@ class FeaturesEmbedding(torch.nn.Module):
         :param x: Long tensor of size ``(batch_size, num_fields)``
         """
         assert isinstance(x, torch.Tensor), f"emb layer: {type(x)}"
-        assert x.device == device, f"emb layer: {x.device} != {device}
+        assert x.device == device, f"emb layer: {x.device} != {device}"
 
         x = x + x.new_tensor(self.offsets).unsqueeze(0)
         return self.embedding(x)
