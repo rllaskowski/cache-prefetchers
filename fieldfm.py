@@ -10,6 +10,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 
+
 class FeaturesEmbedding(torch.nn.Module):
 
     def __init__(self, field_dims, embed_dim):
