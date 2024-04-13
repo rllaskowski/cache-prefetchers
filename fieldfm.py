@@ -212,12 +212,12 @@ def sample_data_point(
 
 def train_ffm(
     ffm,
+    optimizer,
     history,
     cache_history: list[set],
     h,
     epochs,
     epoch_samples=4,
-    optimizer,
     occurences: Optional[Dict[int, List[int]]] = None,
 ):
     ffm.train()
