@@ -83,6 +83,7 @@ class FFM(ProbablistModel):
         current_state = [x[0] for x in cache.access_history[-self.h :]]
         x = [[a, b] + current_state for a, b in ab]
         with torch.no_grad():
+            self.ffm.eval()
             return [float(p) for p in self.ffm(x)]
 
     def on_read(self, cache, address, is_hit):

@@ -221,6 +221,7 @@ def train_ffm(
     epoch_samples=4,
     occurences: Optional[Dict[int, List[int]]] = None,
 ):
+    ffm.train()
     if len(history) <= h + 2:
         return []
 
