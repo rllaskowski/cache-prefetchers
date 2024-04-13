@@ -4,7 +4,6 @@ import numpy as np
 
 
 class RandomMarkovGenerator:
-    
     def __init__(self, num_states):
         self.num_states = num_states
         self.transition_matrix = self.generate_random_transition_matrix()

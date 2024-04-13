@@ -3,11 +3,13 @@ from collections import deque
 from typing import List, Set, Tuple
 
 from cache import Cache
-from ffm import FieldAwareFactorizationMachine, train_ffm
+import torch
+from collections import deque
+from fieldfm import FieldAwareFactorizationMachine, train_ffm, FieldAwareFactorizationMachineModel
+from typing import List, Set, Tuple, Optional, Dict
 
 
 class ProbablistModel(abc.ABC):
-
     def __init__(self, name):
         self.name = name
 
@@ -22,7 +24,6 @@ class ProbablistModel(abc.ABC):
 
     def train(self, cache: Cache):
         pass
-
 
 
 class Markov(ProbablistModel):
@@ -51,25 +52,27 @@ class Markov(ProbablistModel):
 
 
 class FFM(ProbablistModel):
-
-    def __init__(self, n, h=14, k=5, epochs=1, lr=0.01, wd=0.1, epoch_samples=4):
+    def __init__(self, n, h=14, k=5, epochs=1, lr=0.01, wd=0.1, epoch_samples=20, my_ffm=False):
         super().__init__("FFM")
-
-        self.ffm = FieldAwareFactorizationMachine(n, h+2, k)
+        if my_ffm:
+            self.ffm = FieldAwareFactorizationMachine(n, h + 2, k)
+        else:
+            self.ffm = FieldAwareFactorizationMachineModel([n]*(h+2), k)
         self.h = h
+        self.n = n
         self.epochs = epochs
         self.lr = lr
         self.wd = wd
         self.epoch_samples = epoch_samples
-
+        self.occurences = {}
         self.losses = []
 
     def get_probability(self, cache: Cache, a: int, b: int) -> float:
-        a = a%self.ffm.n
-        b = b%self.ffm.n
+        a = a % self.n
+        b = b % self.n
 
-        current_state = [x[0] % self.ffm.n for x in cache.access_history[-self.h:]]
-        x = [a, b]+current_state
+        current_state = [x[0] for x in cache.access_history[-self.h :]]
+        x = [a, b] + current_state
 
         return float(self.ffm(x).item())
 
@@ -77,23 +80,29 @@ class FFM(ProbablistModel):
         if len(cache.access_history) <= self.h:
             return [0.5] * len(ab)
 
-        current_state = [x[0] % self.ffm.n for x in cache.access_history[-self.h:]]
-        x = [
-            [a%self.ffm.n, b%self.ffm.n] + current_state
-            for a, b in ab
-        ]
+        current_state = [x[0] for x in cache.access_history[-self.h :]]
+        x = [[a, b] + current_state for a, b in ab]
+        with torch.no_grad():
+            return [float(p) for p in self.ffm(x)]
 
-        return [float(p) for p in self.ffm(x)]
+    def on_read(self, cache, address, is_hit):
+        i = len(cache.access_history) - 1
+        address = address % self.n
+        if address not in self.occurences:
+            self.occurences[address] = deque()
+
+        self.occurences[address].append(i)
 
     def train(self, cache: Cache):
         losses = train_ffm(
             self.ffm,
-            history=[x[0] % self.ffm.n for x in cache.access_history],
-            cache=set([p % self.ffm.n for p in cache.cache]),
+            history=[x[0] for x in cache.access_history],
+            cache_history=cache.history,
             h=self.h,
             epochs=self.epochs,
             lr=self.lr,
             wd=self.wd,
-            epoch_samples=self.epoch_samples
+            epoch_samples=self.epoch_samples,
+            occurences=self.occurences,
         )
         self.losses.extend(losses)
