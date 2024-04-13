@@ -152,7 +152,7 @@ def sample_data_point(
     cache_history: list[set],
     h: int,
     samples=4,
-    fair=True,
+    fair=False,
     occurences: Optional[Dict[int, List[int]]] = None,
 ):
     """
