@@ -103,7 +103,7 @@ class FieldAwareFactorizationMachineModel(torch.nn.Module):
         if not isinstance(x, torch.Tensor):
             x = torch.tensor(x, dtype=torch.long)
 
-        x.to(device)
+        x = x.to(device)
 
         x = x % self.n
         ffm_term = torch.sum(torch.sum(self.ffm(x), dim=1), dim=1, keepdim=True)
