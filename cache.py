@@ -15,7 +15,10 @@ class Cache:
 
     def evict(self, p=1, allow_non_eviction=False):
         n_evicted = self.eviction_strategy.evict(self, p)
-        
+        if n_evicted is None and not allow_non_eviction:
+            raise ValueError(f"{self.eviction_strategy.name} eviction strategy returned None")
+
+        return n_evicted
 
 
     def prefetch(self, p=1):
@@ -41,7 +44,7 @@ class Cache:
 
         if not hit:
             if len(self.cache) == self.size:
-                self.evict(1)
+                n_evicted = self.evict(1, allow_non_eviction=True)
 
             self.cache.add(address)
 
