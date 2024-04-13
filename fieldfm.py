@@ -22,6 +22,7 @@ class FeaturesEmbedding(torch.nn.Module):
         """
         :param x: Long tensor of size ``(batch_size, num_fields)``
         """
+        x.to(device)
         assert isinstance(x, torch.Tensor), f"emb layer: {type(x)}"
         assert x.device == device, f"emb layer: {x.device} != {device}"
 
@@ -45,6 +46,7 @@ class _FieldAwareFactorizationMachine(torch.nn.Module):
         """
         :param x: Long tensor of size ``(batch_size, num_fields)``
         """
+        x.to(device)
         assert isinstance(x, torch.Tensor), f"_ffm: {type(x)}"
         assert x.device == device, f"_ffm: {x.device} != device"
 
