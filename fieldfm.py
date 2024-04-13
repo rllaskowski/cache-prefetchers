@@ -180,6 +180,8 @@ def sample_data_point(
         a, b = np.random.choice(list(cache), 2, replace=False)
 
         if occurences:
+            try:
+                
             if a not in occurences:
                 r_a = float("inf")
             else:
