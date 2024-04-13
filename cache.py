@@ -44,14 +44,14 @@ class Cache:
         self.history.append(copy.deepcopy(self.cache))
 
         if not hit:
-            if len(self.cache) == self.size:
+            if len(self.cache) == self.size and address not in self.cache:
                 n_evicted = self.evict(1, allow_non_eviction=True)
             else:
                 n_evicted = 0
 
             assert len(self.cache) < self.size or n_evicted == None, f"{self.name} cache size exceede"
 
-            if len(self.cache) == self.size - 1:
+            if len(self.cache) < self.size:
                 self.cache.add(address)
 
         self.eviction_strategy.read_callback(self, address, hit)
