@@ -216,16 +216,15 @@ def train_ffm(
     cache_history: list[set],
     h,
     epochs,
-    lr,
-    wd=0.1,
     epoch_samples=4,
+    optimizer,
     occurences: Optional[Dict[int, List[int]]] = None,
 ):
     ffm.train()
     if len(history) <= h + 2:
         return []
 
-    optimizer = optim.AdamW(ffm.parameters(), lr=lr, weight_decay=wd)
+
     criterion = nn.BCELoss()
     losses = []
 
