@@ -181,15 +181,14 @@ def sample_data_point(
 
         if occurences:
             try:
-                
-            if a not in occurences:
-                r_a = float("inf")
-            else:
                 r_a = next((t_prime for t_prime in occurences[a] if t_prime >= t), float("inf"))
-            if b not in occurences:
-                r_b = float("inf")
-            else:
+            except StopIteration:
+                r_a = float("inf")
+
+            try:
                 r_b = next((t_prime for t_prime in occurences[b] if t_prime >= t), float("inf"))
+            except StopIteration:
+                r_b = float("inf")
         else:
             r_a = next((t_prime for t_prime in range(t, T) if access_history[t_prime] == a), float("inf"))
             r_b = next((t_prime for t_prime in range(t, T) if access_history[t_prime] == b), float("inf"))
