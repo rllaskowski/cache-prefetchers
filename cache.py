@@ -45,8 +45,12 @@ class Cache:
         if not hit:
             if len(self.cache) == self.size:
                 n_evicted = self.evict(1, allow_non_eviction=True)
-            
+            else:
+                n_evicted = 0
 
+
+            if n_evicted is None:
+                raise ValueError(f"{self.eviction_strategy.name} eviction strategy returned None")
             self.cache.add(address)
 
         self.eviction_strategy.read_callback(self, address, hit)
