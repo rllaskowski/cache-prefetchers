@@ -100,12 +100,11 @@ class FFM(ProbablistModel):
     def train(self, cache: Cache):
         losses = train_ffm(
             self.ffm,
+            optimizer=
             history=[x[0] for x in cache.access_history],
             cache_history=cache.history,
             h=self.h,
             epochs=self.epochs,
-            lr=self.lr,
-            wd=self.wd,
             epoch_samples=self.epoch_samples,
             occurences=self.occurences,
         )
