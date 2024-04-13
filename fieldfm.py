@@ -74,6 +74,7 @@ class FeaturesLinear(torch.nn.Module):
         """
         if not isinstance(x, torch.Tensor):
             x = torch.tensor(x, dtype=torch.long)
+        x = x.to(device)
 
         assert x.device == device, f"linear: {x.device} != {device}"
         x = x + x.new_tensor(self.offsets).unsqueeze(0)
