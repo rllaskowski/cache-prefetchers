@@ -68,7 +68,7 @@ class FFM(ProbablistModel):
         self.epoch_samples = epoch_samples
         self.occurences = {}
         self.losses = []
-        self.optimizer = optim.AdamW(ffm, lr=lr, weight_decay=wd)
+        self.optimizer = optim.AdamW(self.ffm.parameters(), lr=lr, weight_decay=wd)
 
     def get_probability(self, cache: Cache, a: int, b: int) -> float:
         a = a % self.n
