@@ -22,6 +22,8 @@ class FeaturesEmbedding(torch.nn.Module):
         """
         :param x: Long tensor of size ``(batch_size, num_fields)``
         """
+        assert x.device == self.offsets.device, f"emb layer: {x.device} != {self.offsets.device}"
+
         x = x + x.new_tensor(self.offsets).unsqueeze(0)
         return self.embedding(x)
 
@@ -42,6 +44,7 @@ class _FieldAwareFactorizationMachine(torch.nn.Module):
         """
         :param x: Long tensor of size ``(batch_size, num_fields)``
         """
+        assert x.device == self.offsets.device, f"_ffm: {x.device} != {self.offsets.device}"
         x = x + x.new_tensor(self.offsets).unsqueeze(0)
         xs = [self.embeddings[i](x) for i in range(self.num_fields)]
         ix = list()
@@ -66,6 +69,8 @@ class FeaturesLinear(torch.nn.Module):
         """
         if not isinstance(x, torch.Tensor):
             x = torch.tensor(x, dtype=torch.long)
+
+        assert x.device == self.offsets.device, f"linear layer: {x.device} != {self.offsets.device}"
         x = x + x.new_tensor(self.offsets).unsqueeze(0)
         return torch.sum(self.fc(x), dim=1) + self.bias
 
@@ -94,6 +99,7 @@ class FieldAwareFactorizationMachineModel(torch.nn.Module):
             x = torch.tensor(x, dtype=torch.long)
 
         x.to(device)
+        
         x = x % self.n
         ffm_term = torch.sum(torch.sum(self.ffm(x), dim=1), dim=1, keepdim=True)
         x = self.linear(x) + ffm_term
