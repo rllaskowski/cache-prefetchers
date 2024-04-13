@@ -6,6 +6,7 @@ import math
 import scipy.optimize as opt
 import numpy as np
 import math
+from typing import List, Set, Tuple, Optional
 
 
 from cache import Cache
@@ -24,9 +25,12 @@ class EvictionStrategy(abc.ABC):
         """Returns a set of addresses to evict from the cache."""
         pass
 
-    def evict(self, cache: Cache, p=1):
+    def evict(self, cache: Cache, p=1) -> Optional[]:
         """Evicts p pages from the cache."""
         pages = set(self._evict(cache, p))
+
+        if pages == None:
+            return
 
         assert (
             len(pages) == p
