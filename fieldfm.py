@@ -184,10 +184,10 @@ def sample_data_point(
                 r_a = float("inf")
             else:
                 r_a = bisect.bisect_left(occurences[a], t)
+                if r_a == len(occurences[a]):
+                    r_a = float("inf")
             if b not in occurences:
-                r_b = float("inf")
-            else:
-                r_b = next((t_prime for t_prime in occurences[b] if t_prime >= t), float("inf"))
+                
         else:
             raise ValueError("occurences is required")
             r_a = next((t_prime for t_prime in range(t, T) if access_history[t_prime] == a), float("inf"))
