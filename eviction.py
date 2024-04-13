@@ -79,6 +79,7 @@ class LRU(EvictionStrategy):
         return to_evict
 
 
+
 class MQ(EvictionStrategy):
     def __init__(self, max_frequency=200, qout_size=100, life_time=1000):
         super().__init__("MQ")
