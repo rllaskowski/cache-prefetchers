@@ -6,8 +6,8 @@ import torch.optim as optim
 from typing import Dict, List, Optional
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 
 
 class FeaturesEmbedding(torch.nn.Module):
