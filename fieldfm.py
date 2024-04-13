@@ -48,7 +48,7 @@ class _FieldAwareFactorizationMachine(torch.nn.Module):
         """
         x = x.to(device)
         assert isinstance(x, torch.Tensor), f"_ffm: {type(x)}"
-        assert x.device == device, f"_ffm: {x.device} != device"
+        assert x.device == device, f"_ffm: {x.device} != {device}"
 
         x = x + x.new_tensor(self.offsets).unsqueeze(0)
         xs = [self.embeddings[i](x) for i in range(self.num_fields)]
