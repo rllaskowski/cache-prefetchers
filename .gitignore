@@ -3,3 +3,4 @@ markov_sequences*
 __pycache__
 **/.DS_Store
 .ipynb_checkpoints
+.venv
