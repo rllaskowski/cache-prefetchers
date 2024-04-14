@@ -227,6 +227,7 @@ class MET(EvictionStrategy):
 def solve_linear_program(probabilities, pages):
     for a, b in probabilities.keys():
         assert math.isclose(probabilities[(a, b)] + probabilities[(b, a)], 1)
+        
     n = len(pages)
 
     c = [1] * n
