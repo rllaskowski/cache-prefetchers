@@ -55,7 +55,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
 
     while len(samples) < n_samples:
         T = len(cache_history)
-        t = random.randint(0, T-1)
+        t = random.randint(0, T-2)
 
         if len(cache_history[t]) < cache_size:
             continue
@@ -63,7 +63,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
         cache = cache_history[t]
         history = access_history[t-history_size:t]
 
-        for
+        for i, item in enumerate(history):
 
 def train(samples, model, optimizer):
     x, y = zip(*samples)
