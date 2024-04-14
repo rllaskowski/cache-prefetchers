@@ -51,7 +51,10 @@ def test_on_sequence(sequence, cache_size):
     cache = []
     history_size = 1
     model = ConstantSequenceModel(
-        input_size=cache
+        input_size=cache_size + history_size,
+        hidden_size=64,
+        output_size=cache_size,
+    )
 
     for i, item in enumerate(sequence):
         if item not in cache:
