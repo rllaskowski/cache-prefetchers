@@ -166,7 +166,7 @@ def sample_data_point(
     sample = []
 
     for _ in range(samples):
-        if not fair or T <= 50:
+        if not fair or T - 50 :
             t = np.random.randint(h, T - 2)
         else:
             t = np.random.choice()
