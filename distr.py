@@ -29,7 +29,7 @@ class SequenceModel(nn.Module):
 import torch
 import torch.nn as nn
 
-class SequenceModel(nn.Module):
+class ConstantSequenceModel(nn.Module):
     def __init__(self, input_size, hidden_size, output_size, sequence_length):
         super(SequenceModel, self).__init__()
         self.embedding = nn.Embedding(input_size, hidden_size)
@@ -44,14 +44,3 @@ class SequenceModel(nn.Module):
         output = self.fc2(hidden)
         output = self.softmax(output)
         return output
-
-# Example usage:
-input_size = 100  # size of the vocabulary
-hidden_size = 64  # size of the hidden state
-output_size = 10  # number of elements in the output distribution
-sequence_length = 4  # fixed length of the sequence
-
-model = SequenceModel(input_size, hidden_size, output_size, sequence_length)
-input_sequence = torch.tensor([[1, 2, 3, 4]])  # example input sequence
-output_probabilities = model(input_sequence)
-print(output_probabi
