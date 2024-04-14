@@ -65,4 +65,7 @@ def test_on_sequence(sequence, cache_size, n_elements):
             cache.add(item)
             continue
 
-        if 
+        if item in cache:
+            continue
+
+        
