@@ -130,7 +130,8 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
         if item not in cache:
             misses += 1
 
-        distr = model(torch.tensor(history[-history_size:]+list(cache), dtype=torch.long).unsqueeze(0))
+        x = history[-history_size:]+list(cache)
+        distr = model(torch.tensor(x, dtype=torch.long).unsqueeze(0))
         distr = distr[0]
         distr = distr.detach().numpy()
         evict = random.choices(list(cache), weights=distr, k=1)[0]
