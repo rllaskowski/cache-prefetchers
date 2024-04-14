@@ -214,7 +214,7 @@ def sample_data_point(
 def train_ffm(
     ffm,
     optimizer,
-    history: list[tuple[int, int]],
+    history: list[int],
     cache_history: list[set],
     h,
     epochs,
