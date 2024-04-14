@@ -48,7 +48,7 @@ class ConstantSequenceModel(nn.Module):
 
 
 
-def test_on_sequence(sequence, cache_size, n_elements):
+def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
     cache = set()
     history_size = 1
     model = ConstantSequenceModel(
