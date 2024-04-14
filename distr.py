@@ -95,7 +95,7 @@ def train(samples, model, optimizer):
     x, y = zip(*samples)
 
     x = torch.tensor(x, dtype=torch.long)
-    y = torch.tensor(y, dtype=torch.long)
+    y = torch.tensor(y, dtype=torch.long, device=device)
 
     optimizer.zero_grad()
 
