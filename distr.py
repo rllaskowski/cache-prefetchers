@@ -79,7 +79,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
             to_evict = max(found, key=lambda x: last_occ[x])
 
         x = history + list(cache)
-
+        print(x, to_evict)
         samples.append((x, to_evict))
 
     return samples
