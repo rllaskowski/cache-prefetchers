@@ -230,13 +230,8 @@ def solve_linear_program(probabilities, pages):
 
     n = len(pages)
 
+    # Objective function
     c = [0] * n
-    for u, page_u in enumerate(pages):
-        for v, page_v in enumerate(pages):
-            if page_u == page_v:
-                continue
-
-            c[u] += probabilities[(page_u, page_v)]
 
     # Constraints
     A_ub = []  # Coefficient matrix for inequalities
@@ -250,6 +245,7 @@ def solve_linear_program(probabilities, pages):
                 continue
 
             constraint[u] = probabilities[(page_v, page_u)]
+            c[u] += probabilities[(page_v, page_u)]
 
         A_ub.append(constraint)
         b_ub.append(0.5)
