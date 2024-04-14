@@ -83,7 +83,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
             to_evict = max(found, key=lambda x: last_occ[x])
 
         x = history + list(cache)
-        print(x, to_evict)
+
         samples.append((x, to_evict))
 
     return samples
@@ -91,7 +91,6 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
 
 def train(samples, model, optimizer):
     x, y = zip(*samples)
-    print(x, y)
 
     x = torch.tensor(x, dtype=torch.long)
     y = torch.tensor(y, dtype=torch.long)
