@@ -1,3 +1,4 @@
+from calendar import c
 import torch
 import torch.nn as nn
 from zmq import device
@@ -54,6 +55,7 @@ def test_on_sequence(sequence, cache_size, n_elements):
         input_size=n_elements,
         hidden_size=64,
         output_size=cache_size,
+        sequence_length=history_size+cache_size
     )
 
     for i, item in enumerate(sequence):
