@@ -72,7 +72,9 @@ def train(samples, model, optimizer):
     loss = nn.CrossEntropyLoss()(output, y)
     loss.backward()
     optimizer.step()
-    
+
+    return loss.item()
+
 
 
 def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
