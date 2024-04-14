@@ -172,6 +172,7 @@ def sample_data_point(
             t = np.random.choice(
                 
 
+
         cache = cache_history[t]
         if len(cache) < 2:
             continue
