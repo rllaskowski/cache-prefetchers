@@ -122,4 +122,4 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
 
         if i != 0 and i % train_interval == 0:
             samples = get_training_samples(cache_history, history, cache_size, history_size)
-            train(samples, model, optimizer)
+            losses.append(train(samples, model, optimizer))
