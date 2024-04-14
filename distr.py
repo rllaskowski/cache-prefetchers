@@ -94,7 +94,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
 def train(samples, model, optimizer):
     x, y = zip(*samples)
 
-    x = torch.tensor(x, dtype=torch.long)
+    x = torch.tensor(x, dtype=torch.long, device=device)
     y = torch.tensor(y, dtype=torch.long, device=device)
 
     optimizer.zero_grad()
