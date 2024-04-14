@@ -44,3 +44,7 @@ class ConstantSequenceModel(nn.Module):
         output = self.fc2(hidden)
         output = self.softmax(output)
         return output
+
+
+
+def test_on_sequence(cache_size)
