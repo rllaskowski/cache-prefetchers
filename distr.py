@@ -32,8 +32,6 @@ class SequenceModel(nn.Module):
         return output
 
 
-import torch
-import torch.nn as nn
 
 class ConstantSequenceModel(nn.Module):
     def __init__(self, input_size, hidden_size, output_size, sequence_length):
