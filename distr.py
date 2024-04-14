@@ -64,9 +64,11 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
 
         cache = cache_history[t]
         history = access_history[t-history_size:t]
-
-        to_evict = next(a in cache for a in history[t+1])
-
+        
+        try:
+            to_evict = next(a in cache for a in history[t+1])
+        except StopIteration:
+            continue
         samples.append((cache, to_evict))
 
 def train(samples, model, optimizer):
