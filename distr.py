@@ -47,8 +47,9 @@ class ConstantSequenceModel(nn.Module):
         return output
 
 
-def get_training_samples(cache_history, access_history, cache_size):
-    
+def get_training_samples(cache_history, access_history, cache_size, n_samples=20):
+    sam
+
 
 
 def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
