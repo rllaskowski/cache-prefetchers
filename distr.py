@@ -47,4 +47,11 @@ class ConstantSequenceModel(nn.Module):
 
 
 
-def test_on_sequence(cache_size)
+def test_on_sequence(sequence, cache_size):
+    cache = []
+
+    for i, item in enumerate(sequence):
+        if item not in cache:
+            cache.append(item)
+            if len(cache) > cache_size:
+                cache.pop(0)
