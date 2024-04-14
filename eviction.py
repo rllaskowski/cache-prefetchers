@@ -286,6 +286,8 @@ class DOM(EvictionStrategy):
         for a, b in inputs:
             if a < b:
                 probabilities[(a, b)] = 1 - probabilities[(b, a)]
+            elif a == b:
+                del probabilities[(a, b)]
 
         cache_list = list(cache.cache)
         distribution = solve_linear_program(probabilities, cache_list)
