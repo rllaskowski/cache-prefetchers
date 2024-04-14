@@ -104,7 +104,7 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
     cache_history = []
     misses = 0
 
-    for i, item in tqdm.tqdm(enumerate(sequence):
+    for i, item in tqdm.tqdm(enumerate(sequence)):
         history.append(item)
         cache_history.append(copy.copy(cache))
 
