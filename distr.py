@@ -60,7 +60,8 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
             continue
 
         cache = cache_history[i]
-        history = access_history[i]
+        history = access_history[i-history_size:i]
+        
 
 def train(samples, model, optimizer):
     x, y = zip(*samples)
