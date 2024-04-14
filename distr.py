@@ -70,7 +70,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
             last_occ[a] = i
             if all(last_occ[a] > 0 for a in cache):
                 break
-
+        
 
         samples.append((cache, to_evict))
 
