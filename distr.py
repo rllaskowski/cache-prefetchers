@@ -65,7 +65,8 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
         cache = cache_history[t]
         history = access_history[t-history_size:t]
 
-        
+        last_occ = {-1: for 
+
 
         samples.append((cache, to_evict))
 
