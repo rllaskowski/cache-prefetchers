@@ -1,9 +1,11 @@
 from calendar import c
+from copy import deepcopy
 import torch
 import torch.nn as nn
 from zmq import device
 import numpy as np
 import random
+
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -100,7 +102,7 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
 
     for i, item in enumerate(sequence):
         history.append(item)
-        cache_history.append(cache)
+        cache_history.append(deepcopy.copy(cache))
 
         if len(cache) < cache_size:
             cache.add(item)
