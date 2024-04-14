@@ -287,9 +287,10 @@ class DOM(EvictionStrategy):
             if a < b:
                 probabilities[(a, b)] = 1 - probabilities[(b, a)]
 
-        distribution = solve_linear_program(probabilities, list(cache.cache))
+        cache_list = list(cache.cache)
+        distribution = solve_linear_program(probabilities, cache_list)
 
-        sampled_pages = random.choices(list(cache.cache), weights=distribution, k=p)
+        sampled_pages = random.choices(cache_list, weights=distribution, k=p)
 
         if len(cache.access_history) % self.train_interval == 0:
             self.prob_model.train(cache)
