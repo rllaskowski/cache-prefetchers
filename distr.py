@@ -57,8 +57,10 @@ def test_on_sequence(sequence, cache_size, n_elements):
         output_size=cache_size,
         sequence_length=history_size+cache_size
     )
+    history = []
 
     for i, item in enumerate(sequence):
+        historu.append(item)
         if len(cache) < cache_size:
             cache.add(item)
             continue
