@@ -196,12 +196,9 @@ def sample_data_point(
         if r_a < r_b:
             y = 1
         elif r_a == r_b:
-            y = 0.5
+            continue
         else:
             y = 0
-
-        if y == 0.5:
-            continue
 
         sample.append((y, [a, b] + access_history[t - h : t]))
 
