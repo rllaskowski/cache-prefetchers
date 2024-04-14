@@ -6,7 +6,7 @@ from zmq import device
 import numpy as np
 import random
 import copy
-
+import tqdm
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -64,11 +64,12 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
 
         cache = cache_history[t]
         history = access_history[t-history_size:t]
-        
+
         try:
             to_evict = next(a in cache for a in history[t+1])
         except StopIteration:
             continue
+
         samples.append((cache, to_evict))
 
 def train(samples, model, optimizer):
@@ -103,7 +104,7 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
     cache_history = []
     misses = 0
 
-    for i, item in enumerate(sequence):
+    for i, item in tqdm.tqdm(enumerate(sequence):
         history.append(item)
         cache_history.append(copy.copy(cache))
 
