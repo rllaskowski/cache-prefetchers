@@ -50,7 +50,7 @@ class ConstantSequenceModel(nn.Module):
         return output
 
 
-def get_training_samples(cache_history, access_history, cache_size, n_samples=20):
+def get_training_samples(cache_history, access_history, cache_size, history_size, n_samples=20):
     samples = []
 
     while len(samples) < n_samples:
@@ -60,7 +60,7 @@ def get_training_samples(cache_history, access_history, cache_size, n_samples=20
             continue
 
         cache = cache_history[i]
-        history = access_history[
+        history = access_history[i]
 
 def train(samples, model, optimizer):
     x, y = zip(*samples)
