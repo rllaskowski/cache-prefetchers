@@ -2,6 +2,9 @@ from calendar import c
 import torch
 import torch.nn as nn
 from zmq import device
+import numpy as np
+import random
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -55,7 +58,7 @@ def get_training_samples(cache_history, access_history, cache_size, n_samples=20
         if len(cache_history[i]) < cache_size:
             continue
 
-        
+
 
 
 
