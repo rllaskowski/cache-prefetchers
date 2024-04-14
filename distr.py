@@ -47,6 +47,8 @@ class ConstantSequenceModel(nn.Module):
         return output
 
 
+def get_training_samples()
+
 
 def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
     cache = set()
@@ -58,6 +60,8 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
         sequence_length=history_size+cache_size
     )
     history = []
+    cache_
+
 
     for i, item in enumerate(sequence):
         history.append(item)
@@ -67,5 +71,3 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
 
         if item in cache:
             continue
-
-        
