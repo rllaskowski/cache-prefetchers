@@ -49,7 +49,9 @@ class ConstantSequenceModel(nn.Module):
 
 def test_on_sequence(sequence, cache_size):
     cache = []
+    history_size = 1
     model = ConstantSequenceModel(
+        input_size=cache
 
     for i, item in enumerate(sequence):
         if item not in cache:
