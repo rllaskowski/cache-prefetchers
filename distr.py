@@ -59,7 +59,8 @@ def get_training_samples(cache_history, access_history, cache_size, n_samples=20
         if len(cache_history[i]) < cache_size:
             continue
 
-        
+        cache = cache_history[i]
+        history = access_history[
 
 def train(samples, model, optimizer):
     x, y = zip(*samples)
