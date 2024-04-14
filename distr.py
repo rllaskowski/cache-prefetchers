@@ -47,11 +47,11 @@ class ConstantSequenceModel(nn.Module):
 
 
 
-def test_on_sequence(sequence, cache_size):
+def test_on_sequence(sequence, cache_size, n_elements):
     cache = []
     history_size = 1
     model = ConstantSequenceModel(
-        input_size=cache_size + history_size,
+        input_size=n_elements,
         hidden_size=64,
         output_size=cache_size,
     )
