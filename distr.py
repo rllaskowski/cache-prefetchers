@@ -92,7 +92,7 @@ def train(samples, model, optimizer):
     x = torch.tensor(x, dtype=torch.long)
     y = torch.tensor(y, dtype=torch.long)
 
-    # y must be a distr
+    # if y = [0]
 
     optimizer.zero_grad()
 
