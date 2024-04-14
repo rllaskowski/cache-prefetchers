@@ -85,6 +85,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
 
 def train(samples, model, optimizer):
     x, y = zip(*samples)
+    print(x, y)
 
     x = torch.tensor(x, dtype=torch.long)
     y = torch.tensor(y, dtype=torch.long)
