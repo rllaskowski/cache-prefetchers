@@ -166,7 +166,7 @@ def sample_data_point(
     sample = []
 
     for _ in range(samples):
-        if not fair:
+        if not fair or T <= 50:
             t = np.random.randint(h, T - 2)
         else:
             # if sampling is fair than expected number of drawing all t's are the same
