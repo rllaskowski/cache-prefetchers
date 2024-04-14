@@ -54,6 +54,7 @@ def get_training_samples(cache_history, access_history, cache_size, n_samples=20
     samples = []
 
     while len(samples) < n_samples:
+        i = random.randint(0, len(cache_history)-1)
         
         if len(cache_history[i]) < cache_size:
             continue
