@@ -88,6 +88,8 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
         if item in cache:
             continue
 
+        
+
         if i != 0 and i % train_interval == 0:
             samples = get_training_samples(cache_history, history, cache_size)
             train(samples, model, optimizer)
