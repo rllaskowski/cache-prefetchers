@@ -24,3 +24,20 @@ class SequenceModel(nn.Module):
         output = self.fc(output)
         output = self.softmax(output)
         return output
+
+
+class ConstantSequenceModel(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SequenceModel, self).__init__()
+        self.embedding = nn.Embedding(input_size, hidden_size)
+        self.fc1 = nn.Linear(hidden_size * sequence_length, hidden_size)
+        self.fc2 = nn.Linear(hidden_size, output_size)
+        self.softmax = nn.Softmax(dim=1)
+
+    def forward(self, x):
+        embedded = self.embedding(x)
+        embedded = embedded.view(embedded.size(0), -1)  # Flatten the sequence
+        hidden = torch.relu(self.fc1(embedded))
+        output = self.fc2(hidden)
+        output = self.softmax(output)
+        return output
