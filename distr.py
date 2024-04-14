@@ -55,12 +55,13 @@ def get_training_samples(cache_history, access_history, cache_size, n_samples=20
 
     while len(samples) < n_samples:
         i = random.randint(0, len(cache_history)-1)
-        
+
         if len(cache_history[i]) < cache_size:
             continue
 
 
-
+def train(samples, model, optimizer):
+    ...
 
 
 def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
@@ -72,6 +73,7 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
         output_size=cache_size,
         sequence_length=history_size+cache_size
     )
+    optimizer = 
     history = []
     cache_history = []
 
