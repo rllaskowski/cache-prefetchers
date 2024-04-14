@@ -66,7 +66,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
         history = access_history[t-history_size:t]
 
         try:
-            to_evict = next(a in cache for a in access_history[t+1])
+            to_evict = next(a in cache for a in access_history[t+1:])
         except StopIteration:
             continue
 
