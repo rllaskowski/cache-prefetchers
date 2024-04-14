@@ -69,11 +69,11 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
         found = set()
         for i, a in enumerate(access_history[t+1:]):
             last_occ[a] = i
-            if all(last_occ[a] > 0 for a in cache):
+            found.add(a)
+            if len(found) == cache_size:
                 break
 
-
-        to_evict = random.choice([a for a in cache if last_occ[a] == -1])
+        if 
 
         samples.append((cache, to_evict))
 
