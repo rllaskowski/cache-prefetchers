@@ -59,7 +59,5 @@ def test_on_sequence(sequence, cache_size, n_elements):
     )
 
     for i, item in enumerate(sequence):
-        if item not in cache:
-            cache.append(item)
-            if len(cache) > cache_size:
-                cache.pop(0)
+        if len(cache) == cache_size:
+            
