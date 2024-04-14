@@ -17,7 +17,7 @@ class SequenceModel(nn.Module):
         if not isinstance(x, torch.Tensor):
             x = torch.tensor(x, dtype=torch.long)
 
-        x = x.to(self.device)
+        x = x.to(device)
 
         embedded = self.embedding(x)
         output, hidden = self.rnn(embedded)
