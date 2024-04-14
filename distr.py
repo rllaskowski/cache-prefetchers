@@ -86,7 +86,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
 
         distr = [0] * cache_size
         distr[to_evict] = list_cache.index(to_evict)
-        samples.append((x, to_evict))
+        samples.append((x, distr))
 
     return samples
 
@@ -96,8 +96,6 @@ def train(samples, model, optimizer):
 
     x = torch.tensor(x, dtype=torch.long)
     y = torch.tensor(y, dtype=torch.long)
-
-    y = torch.zeros(len(y), model.output_size).scatter_(1, y.unsqueeze(1), 1)
 
     optimizer.zero_grad()
 
