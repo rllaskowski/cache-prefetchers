@@ -169,10 +169,7 @@ def sample_data_point(
         if not fair or T <= 50:
             t = np.random.randint(h, T - 2)
         else:
-            # if sampling is fair than expected number of drawing all t's are the same
-            # but the T is growing so we need to adjust the probability of sampling t
-            # to make it fair
-            t = np.random.choice(range(h, T - 2), p=[1 / (T - h - 2)] * (T - h - 2))
+            t = np.random.choice()
 
         cache = cache_history[t]
         if len(cache) < 2:
