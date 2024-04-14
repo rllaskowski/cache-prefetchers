@@ -53,7 +53,9 @@ class Markov(ProbablistModel):
 
 
 class FFM(ProbablistModel):
-    def __init__(self, n, h=14, k=5, epochs=1, lr=0.01, wd=0.1, epoch_samples=20, my_ffm=False, allow_non_eviction=False):
+    def __init__(
+        self, n, h=14, k=5, epochs=1, lr=0.01, wd=0.1, epoch_samples=20, my_ffm=False, allow_non_eviction=False, with_neutral=False
+    ):
         super().__init__("FFM")
 
         if my_ffm:
@@ -69,6 +71,7 @@ class FFM(ProbablistModel):
         self.occurences = {}
         self.losses = []
         self.optimizer = optim.AdamW(self.ffm.parameters(), lr=lr, weight_decay=wd)
+        self.
 
     def get_probability(self, cache: Cache, a: int, b: int) -> float:
         a = a % self.n
