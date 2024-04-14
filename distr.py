@@ -54,13 +54,14 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
     samples = []
 
     while len(samples) < n_samples:
-        t = random.randint(0, len(cache_history)-1)
+        T = len(cache_history)
+        t = random.randint(0, T-1)
 
-        if len(cache_history[i]) < cache_size:
+        if len(cache_history[t]) < cache_size:
             continue
 
-        cache = cache_history[i]
-        history = access_history[i-history_size:i]
+        cache = cache_history[t]
+        history = access_history[t-history_size:t]
 
         for
 
