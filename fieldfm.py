@@ -166,9 +166,8 @@ def sample_data_point(
     sample = []
 
     for _ in range(samples):
-        if not fair or T - 2 - 50 < 0:
+        if not fair:
             t = np.random.randint(h, T - 2)
-
 
         cache = cache_history[t]
         if len(cache) < 2:
