@@ -74,7 +74,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
                 break
 
         if len(found) < cache_size:
-            
+            to_evict = random.choice(list(cache - found))
 
         samples.append((cache, to_evict))
 
