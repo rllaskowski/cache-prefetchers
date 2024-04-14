@@ -3,8 +3,11 @@ from operator import le
 from typing import List, Set, Tuple
 import copy
 
+
 class Cache:
-    def __init__(self, name: str, eviction_strategy, prefetch_strategy=None, p=1, size=8):
+    def __init__(
+        self, name: str, eviction_strategy, prefetch_strategy=None, p=1, size=8
+    ):
         self.name = name
         self.eviction_strategy = eviction_strategy
         self.prefetch_strategy = prefetch_strategy
@@ -16,12 +19,11 @@ class Cache:
 
     def evict(self, p=1, allow_non_eviction=False):
         n_evicted = self.eviction_strategy.evict(self, p)
-        assert n_evicted is not None or allow_non_eviction,(
-            f"{self.eviction_strategy.name} eviction strategy returned None"
-        )
+        assert (
+            n_evicted is not None or allow_non_eviction
+        ), f"{self.eviction_strategy.name} eviction strategy returned None"
 
         return n_evicted
-
 
     def prefetch(self, p=1):
         to_fetch = set(self.prefetch_strategy.get_to_fetch(self, p))
@@ -50,7 +52,9 @@ class Cache:
             else:
                 n_evicted = 0
 
-            assert len(self.cache) < self.size or n_evicted == None, f"{self.name} cache size exceede"
+            assert (
+                len(self.cache) < self.size or n_evicted == None
+            ), f"{self.name} cache size exceede"
 
             if len(self.cache) < self.size:
                 self.cache.add(address)

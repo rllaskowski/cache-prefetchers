@@ -9,14 +9,11 @@ import bisect
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-
-
 class FeaturesEmbedding(torch.nn.Module):
-
     def __init__(self, field_dims, embed_dim):
         super().__init__()
         self.embedding = torch.nn.Embedding(sum(field_dims), embed_dim)
-        self.offsets = np.array((0, *np.cumsum(field_dims)[:-1]), dtype='int64')
+        self.offsets = np.array((0, *np.cumsum(field_dims)[:-1]), dtype="int64")
         torch.nn.init.xavier_uniform_(self.embedding.weight.data)
 
     def forward(self, x):
@@ -32,14 +29,16 @@ class FeaturesEmbedding(torch.nn.Module):
 
 
 class _FieldAwareFactorizationMachine(torch.nn.Module):
-
     def __init__(self, field_dims, embed_dim):
         super().__init__()
         self.num_fields = len(field_dims)
-        self.embeddings = torch.nn.ModuleList([
-            torch.nn.Embedding(sum(field_dims), embed_dim) for _ in range(self.num_fields)
-        ])
-        self.offsets = np.array((0, *np.cumsum(field_dims)[:-1]), dtype='int64')
+        self.embeddings = torch.nn.ModuleList(
+            [
+                torch.nn.Embedding(sum(field_dims), embed_dim)
+                for _ in range(self.num_fields)
+            ]
+        )
+        self.offsets = np.array((0, *np.cumsum(field_dims)[:-1]), dtype="int64")
         for embedding in self.embeddings:
             torch.nn.init.xavier_uniform_(embedding.weight.data)
 
@@ -62,12 +61,11 @@ class _FieldAwareFactorizationMachine(torch.nn.Module):
 
 
 class FeaturesLinear(torch.nn.Module):
-
     def __init__(self, field_dims, output_dim=1):
         super().__init__()
         self.fc = torch.nn.Embedding(sum(field_dims), output_dim)
         self.bias = torch.nn.Parameter(torch.zeros((output_dim,)))
-        self.offsets = np.array((0, *np.cumsum(field_dims)[:-1]), dtype='int64')
+        self.offsets = np.array((0, *np.cumsum(field_dims)[:-1]), dtype="int64")
 
     def forward(self, x):
         """
@@ -111,7 +109,6 @@ class FieldAwareFactorizationMachineModel(torch.nn.Module):
         ffm_term = torch.sum(torch.sum(self.ffm(x), dim=1), dim=1, keepdim=True)
         x = self.linear(x) + ffm_term
         return torch.sigmoid(x.squeeze(1))
-
 
 
 class FieldAwareFactorizationMachine(nn.Module):
@@ -191,13 +188,21 @@ def sample_data_point(
                     r_b = float("inf")
         else:
             raise ValueError("occurences is required")
-            r_a = next((t_prime for t_prime in range(t, T) if access_history[t_prime] == a), float("inf"))
-            r_b = next((t_prime for t_prime in range(t, T) if access_history[t_prime] == b), float("inf"))
+            r_a = next(
+                (t_prime for t_prime in range(t, T) if access_history[t_prime] == a),
+                float("inf"),
+            )
+            r_b = next(
+                (t_prime for t_prime in range(t, T) if access_history[t_prime] == b),
+                float("inf"),
+            )
 
         if r_a < r_b:
             y = 1
         elif r_a == r_b:
-            continue
+            if not with_neutral:
+                continue
+            y = 0.5
         else:
             y = 0
 
@@ -221,14 +226,22 @@ def train_ffm(
     if len(history) <= h + 2:
         return []
 
-
     criterion = nn.BCELoss()
     losses = []
 
     for _ in range(epochs):
-        data_point = sample_data_point(history, cache_history, h, epoch_samples, occurences=occurences, with_neutral=with_neutral)
+        data_point = sample_data_point(
+            history,
+            cache_history,
+            h,
+            epoch_samples,
+            occurences=occurences,
+            with_neutral=with_neutral,
+        )
 
-        x_tensor = torch.tensor([data[1] for data in data_point], dtype=torch.long, device=device)
+        x_tensor = torch.tensor(
+            [data[1] for data in data_point], dtype=torch.long, device=device
+        )
         y_tensor = torch.tensor(
             [data[0] for data in data_point], dtype=torch.float32, device=device
         )

@@ -8,7 +8,6 @@ import numpy as np
 import math
 
 
-
 from cache import Cache
 
 ASSERTS_ENABLED = True
@@ -79,7 +78,6 @@ class LRU(EvictionStrategy):
         return to_evict
 
 
-
 class MQ(EvictionStrategy):
     def __init__(self, max_frequency=200, qout_size=100, life_time=1000):
         super().__init__("MQ")
@@ -121,9 +119,15 @@ class MQ(EvictionStrategy):
 
         if ASSERTS_ENABLED:
             for address in _cache.cache:
-                assert address in self.page_frequency, "address is not in page_frequency"
-                assert address in self.page_queue_num, "address is not in page_queue_num"
-                assert address in self.page_expire_time, "address is not in page_expire_time"
+                assert (
+                    address in self.page_frequency
+                ), "address is not in page_frequency"
+                assert (
+                    address in self.page_queue_num
+                ), "address is not in page_queue_num"
+                assert (
+                    address in self.page_expire_time
+                ), "address is not in page_expire_time"
                 assert address not in self.qout, "address is in qout"
 
     def fetch_callback(self, _cache, addresses):
@@ -146,9 +150,15 @@ class MQ(EvictionStrategy):
 
         if ASSERTS_ENABLED:
             for address in _cache.cache:
-                assert address in self.page_frequency, "address is not in page_frequency"
-                assert address in self.page_queue_num, "address is not in page_queue_num"
-                assert address in self.page_expire_time, "address is not in page_expire_time"
+                assert (
+                    address in self.page_frequency
+                ), "address is not in page_frequency"
+                assert (
+                    address in self.page_queue_num
+                ), "address is not in page_queue_num"
+                assert (
+                    address in self.page_expire_time
+                ), "address is not in page_expire_time"
                 assert address not in self.qout, "address is in qout"
 
     def _evict(self, _cache: Cache, p=1):
@@ -164,7 +174,9 @@ class MQ(EvictionStrategy):
                         del self.page_frequency[quout_evict]
 
                     if ASSERTS_ENABLED:
-                        assert evict_address not in self.qout, "address is already in qout"
+                        assert (
+                            evict_address not in self.qout
+                        ), "address is already in qout"
 
                     self.qout.append(evict_address)
 
@@ -187,7 +199,9 @@ class MQ(EvictionStrategy):
 
             if self.page_expire_time[front_address] < self.current_time:
                 queue.popleft()
-                self.page_expire_time[front_address] = self.current_time + self.life_time
+                self.page_expire_time[front_address] = (
+                    self.current_time + self.life_time
+                )
                 new_queue_num = i - 1
                 self.frequency_queues[new_queue_num].append(front_address)
                 self.page_queue_num[front_address] = new_queue_num
@@ -216,7 +230,9 @@ class MET(EvictionStrategy):
         self.prob_model = prob_model
 
     def get_to_evict(self, cache, p=1):
-        page_times = {page: self.prob_model.get_expected_time(page) for page in cache.cache}
+        page_times = {
+            page: self.prob_model.get_expected_time(page) for page in cache.cache
+        }
         sorted_pages = sorted(page_times, key=page_times.get, reverse=True)
         return sorted_pages[:p]
 

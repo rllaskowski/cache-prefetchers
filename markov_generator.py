@@ -19,7 +19,9 @@ class RandomMarkovGenerator:
 
         for _ in range(length - 1):
             current_state = sequence[-1]
-            next_state = np.random.choice(self.num_states, p=self.transition_matrix[current_state])
+            next_state = np.random.choice(
+                self.num_states, p=self.transition_matrix[current_state]
+            )
             sequence.append(next_state)
 
         return sequence

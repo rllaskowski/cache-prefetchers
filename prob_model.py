@@ -5,7 +5,11 @@ from typing import List, Set, Tuple
 from cache import Cache
 import torch
 from collections import deque
-from fieldfm import FieldAwareFactorizationMachine, train_ffm, FieldAwareFactorizationMachineModel
+from fieldfm import (
+    FieldAwareFactorizationMachine,
+    train_ffm,
+    FieldAwareFactorizationMachineModel,
+)
 from typing import List, Set, Tuple, Optional, Dict
 from torch import optim
 
@@ -44,7 +48,9 @@ class Markov(ProbablistModel):
         return [transition[0][-1] for transition in sorted_transitions[:p]]
 
     def get_most_probable(self, p=1):
-        sorted_transitions = sorted(self.transitions.items(), key=lambda x: x[1], reverse=True)
+        sorted_transitions = sorted(
+            self.transitions.items(), key=lambda x: x[1], reverse=True
+        )
         return [transition[0][-1] for transition in sorted_transitions[:p]]
 
     def on_read(self, address, is_hit):
@@ -54,14 +60,24 @@ class Markov(ProbablistModel):
 
 class FFM(ProbablistModel):
     def __init__(
-        self, n, h=14, k=5, epochs=1, lr=0.01, wd=0.1, epoch_samples=20, my_ffm=False, allow_non_eviction=False, with_neutral=False
+        self,
+        n,
+        h=14,
+        k=5,
+        epochs=1,
+        lr=0.01,
+        wd=0.1,
+        epoch_samples=20,
+        my_ffm=False,
+        allow_non_eviction=False,
+        with_neutral=False,
     ):
         super().__init__("FFM")
 
         if my_ffm:
             self.ffm = FieldAwareFactorizationMachine(n, h + 2, k)
         else:
-            self.ffm = FieldAwareFactorizationMachineModel([n]*(h+2), k)
+            self.ffm = FieldAwareFactorizationMachineModel([n] * (h + 2), k)
         self.h = h
         self.n = n
         self.epochs = epochs

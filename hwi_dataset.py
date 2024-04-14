@@ -7,19 +7,28 @@ import pandas as pd
 
 
 def path_sorting_fn(path):
-    path = path.replace("cache_trace_", "").replace("ftds_trace_", "").replace("trace_", "")
+    path = (
+        path.replace("cache_trace_", "")
+        .replace("ftds_trace_", "")
+        .replace("trace_", "")
+    )
 
     return tuple(map(int, path.split("_")))
 
 
 def get_volume_paths(volume_dir):
     return sorted(
-        glob.glob(f"{volume_dir}/cache_trace*"), key=lambda p: path_sorting_fn(p.split("/")[-1])
+        glob.glob(f"{volume_dir}/cache_trace*"),
+        key=lambda p: path_sorting_fn(p.split("/")[-1]),
     )
 
 
 def get_test_set_volumes(test_set):
-    s = [x for x in glob.glob(f"../trace/Trace/{test_set}/*") if "trace" in x.split("/")[-1]]
+    s = [
+        x
+        for x in glob.glob(f"../trace/Trace/{test_set}/*")
+        if "trace" in x.split("/")[-1]
+    ]
 
     if "scenario_test_trace_simple" in test_set:
         s = s[:1]  # This is big enough set
@@ -50,20 +59,26 @@ def get_reads(df) -> np.ndarray:
 
 
 def get_test_set() -> Dict[str, List[str]]:
-    test_dirs = [str(i) for i in range(1, 12)] + ["scenario_test_trace_simple/VDI_virus_scan"]
+    test_dirs = [str(i) for i in range(1, 12)] + [
+        "scenario_test_trace_simple/VDI_virus_scan"
+    ]
 
     return {
-        test_dir: [get_volume_paths(v_path) for v_path in get_test_set_volumes(test_dir)]
+        test_dir: [
+            get_volume_paths(v_path) for v_path in get_test_set_volumes(test_dir)
+        ]
         for test_dir in test_dirs
     }
 
 
-def get_page_requests(read_trace: List[Tuple[int, int]], page_size=16 * 1024) -> List[int]:
+def get_page_requests(
+    read_trace: List[Tuple[int, int]], page_size=16 * 1024
+) -> List[int]:
     requests = []
 
     for addr, length in read_trace:
         while length > 0:
-            requests.append((addr//page_size))
+            requests.append((addr // page_size))
             addr += page_size
             length -= page_size
 
