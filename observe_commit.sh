@@ -14,5 +14,5 @@ do
   git commit -m "$commit_message"
   git push origin $branch_name
   # Dodaj opóźnienie 30 sekund
-  sleep 15
+  sleep 5
 done
