@@ -49,7 +49,7 @@ class ConstantSequenceModel(nn.Module):
 
 
 def test_on_sequence(sequence, cache_size, n_elements):
-    cache = {}
+    cache = set()
     history_size = 1
     model = ConstantSequenceModel(
         input_size=n_elements,
@@ -59,4 +59,8 @@ def test_on_sequence(sequence, cache_size, n_elements):
     )
 
     for i, item in enumerate(sequence):
-        if le
+        if len(cache) < cache_size:
+            cache.add(item)
+            continue
+
+        
