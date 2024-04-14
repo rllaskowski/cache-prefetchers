@@ -64,6 +64,8 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
 
     for i, item in enumerate(sequence):
         history.append(item)
+        cache_history.append(cache)
+        
         if len(cache) < cache_size:
             cache.add(item)
             continue
