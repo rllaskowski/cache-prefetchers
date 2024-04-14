@@ -46,6 +46,11 @@ class ConstantSequenceModel(nn.Module):
         self.to(device)
 
     def forward(self, x):
+        if not isinstance(x, torch.Tensor):
+            x = torch.tensor(x, dtype=torch.long)
+
+        x = x.to(device)
+
         embedded = self.embedding(x)
         embedded = embedded.view(embedded.size(0), -1)  # Flatten the sequence
         hidden = torch.relu(self.fc1(embedded))
