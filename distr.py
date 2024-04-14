@@ -92,7 +92,8 @@ def train(samples, model, optimizer):
     x = torch.tensor(x, dtype=torch.long)
     y = torch.tensor(y, dtype=torch.long)
 
-    # if y = [0]
+    # y to one-hot
+    y = torch.zeros(len(y), model.output_size).scatter_(1, y.unsqueeze(1), 1)
 
     optimizer.zero_grad()
 
