@@ -11,9 +11,14 @@ class SequenceModel(nn.Module):
         self.rnn = nn.GRU(hidden_size, hidden_size, batch_first=True)
         self.fc = nn.Linear(hidden_size, output_size)
         self.softmax = nn.Softmax(dim=2)
-        s
+        self.device = device
 
     def forward(self, x):
+        if not isinstance(x, torch.Tensor):
+            x = torch.tensor(x, dtype=torch.long)
+
+        x = x.to(self.device)
+
         embedded = self.embedding(x)
         output, hidden = self.rnn(embedded)
         output = self.fc(output)
