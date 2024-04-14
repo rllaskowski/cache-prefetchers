@@ -42,7 +42,10 @@ class ConstantSequenceModel(nn.Module):
         self.fc1 = nn.Linear(hidden_size * sequence_length, hidden_size)
         self.fc2 = nn.Linear(hidden_size, output_size)
         self.softmax = nn.Softmax(dim=1)
-        
+        self.output_size = output_size
+        self.input_size = input_size
+        self.sequence_length = sequence_length
+        self.to(device)
 
     def forward(self, x):
         embedded = self.embedding(x)
