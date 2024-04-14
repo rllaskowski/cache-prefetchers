@@ -155,6 +155,7 @@ def sample_data_point(
     samples=4,
     fair=False,
     occurences: Optional[Dict[int, List[int]]] = None,
+    with_neutral=False,
 ):
     """
     history: List of page requests (s0, s1, ..., sT-1)
@@ -214,6 +215,7 @@ def train_ffm(
     epochs,
     epoch_samples=4,
     occurences: Optional[Dict[int, List[int]]] = None,
+    with_neutral=False,
 ):
     ffm.train()
     if len(history) <= h + 2:
@@ -224,7 +226,7 @@ def train_ffm(
     losses = []
 
     for _ in range(epochs):
-        data_point = sample_data_point(history, cache_history, h, epoch_samples, occurences=occurences)
+        data_point = sample_data_point(history, cache_history, h, epoch_samples, occurences=occurences, with_neutral=with_neutral)
 
         x_tensor = torch.tensor([data[1] for data in data_point], dtype=torch.long, device=device)
         y_tensor = torch.tensor(
