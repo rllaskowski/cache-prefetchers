@@ -31,7 +31,7 @@ import torch.nn as nn
 
 class ConstantSequenceModel(nn.Module):
     def __init__(self, input_size, hidden_size, output_size, sequence_length):
-        super(SequenceModel, self).__init__()
+        super().__init__()
         self.embedding = nn.Embedding(input_size, hidden_size)
         self.fc1 = nn.Linear(hidden_size * sequence_length, hidden_size)
         self.fc2 = nn.Linear(hidden_size, output_size)
