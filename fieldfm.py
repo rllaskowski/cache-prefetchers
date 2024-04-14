@@ -165,7 +165,7 @@ def sample_data_point(
     T = len(access_history)
     sample = []
 
-    for _ in range(samples):
+    while len(sample) < samples:
         if not fair:
             t = np.random.randint(h, T - 2)
 
@@ -199,6 +199,9 @@ def sample_data_point(
             y = 0.5
         else:
             y = 0
+
+        if y == 0.5:
+            continue
 
         sample.append((y, [a, b] + access_history[t - h : t]))
 
