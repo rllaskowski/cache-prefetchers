@@ -73,7 +73,8 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
             if len(found) == cache_size:
                 break
 
-        if 
+        if len(found) < cache_size:
+            
 
         samples.append((cache, to_evict))
 
