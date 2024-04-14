@@ -54,7 +54,7 @@ def get_training_samples(cache_history, access_history, cache_size, n_samples=20
     samples = []
 
     while len(samples) < n_samples:
-        i = torch.randint(0, len(access_history), (1,)).item()
+        
         if len(cache_history[i]) < cache_size:
             continue
 
