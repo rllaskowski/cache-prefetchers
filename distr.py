@@ -61,7 +61,18 @@ def get_training_samples(cache_history, access_history, cache_size, n_samples=20
 
 
 def train(samples, model, optimizer):
-    x, y = 
+    x, y = zip(*samples)
+
+    x = torch.tensor(x, dtype=torch.long)
+    y = torch.tensor(y, dtype=torch.long)
+
+    optimizer.zero_grad()
+
+    output = model(x)
+    loss = nn.CrossEntropyLoss()(output, y)
+    loss.backward()
+    optimizer.step()
+    
 
 
 def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
