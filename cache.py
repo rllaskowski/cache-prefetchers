@@ -16,8 +16,9 @@ class Cache:
 
     def evict(self, p=1, allow_non_eviction=False):
         n_evicted = self.eviction_strategy.evict(self, p)
-        if n_evicted is None and not allow_non_eviction:
-            raise ValueError(f"{self.eviction_strategy.name} eviction strategy returned None")
+        assert n_evicted is not None or allow_non_eviction,(
+            f"{self.eviction_strategy.name} eviction strategy returned None"
+        )
 
         return n_evicted
 
