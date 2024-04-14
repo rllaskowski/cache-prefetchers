@@ -81,9 +81,9 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
             to_evict = random.choice(list(cache - found))
         else:
             to_evict = max(found, key=lambda x: last_occ[x])
-
+        list_cache = sorted(list(cache)
         x = history + list(cache)
-        # index of element to evict in 
+        # index of element to evict in
         samples.append((x, to_evict))
 
     return samples
