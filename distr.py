@@ -80,7 +80,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
 
         x = history + list(cache)
 
-        samples.append((x, y))
+        samples.append((x, to_evict))
 
     return samples
 
