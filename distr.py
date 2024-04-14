@@ -63,7 +63,7 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
         cache = cache_history[t]
         history = access_history[t-history_size:t]
 
-        for i, item in enumerate(history):
+        to_evict = n
 
 def train(samples, model, optimizer):
     x, y = zip(*samples)
