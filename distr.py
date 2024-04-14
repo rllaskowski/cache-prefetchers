@@ -72,6 +72,8 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
                 break
         
 
+        to_evict = random.choice([a for a in cache if last_occ[a] == -1])
+
         samples.append((cache, to_evict))
 
 def train(samples, model, optimizer):
