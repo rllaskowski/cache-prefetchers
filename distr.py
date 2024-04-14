@@ -80,6 +80,9 @@ def get_training_samples(cache_history, access_history, cache_size, history_size
 
         samples.append((cache, to_evict))
 
+    return samples
+
+
 def train(samples, model, optimizer):
     x, y = zip(*samples)
 
