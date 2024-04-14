@@ -73,7 +73,7 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
         output_size=cache_size,
         sequence_length=history_size+cache_size
     )
-    optimizer = 
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.01, weight_decay=0.1)
     history = []
     cache_history = []
 
