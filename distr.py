@@ -99,6 +99,7 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.01, weight_decay=0.1)
     history = []
     cache_history = []
+    misses = 0
 
     for i, item in enumerate(sequence):
         history.append(item)
@@ -110,6 +111,9 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
 
         if item in cache:
             continue
+
+        if item not in cache:
+            misses += 1
 
         distr = model(torch.tensor(history[-history_size:]+list(cache), dtype=torch.long).unsqueeze(0))
         distr = distr[0]
@@ -123,3 +127,5 @@ def test_on_sequence(sequence, cache_size, n_elements, train_interval=50):
         if i != 0 and i % train_interval == 0:
             samples = get_training_samples(cache_history, history, cache_size, history_size)
             losses.append(train(samples, model, optimizer))
+
+    return misses, losses
