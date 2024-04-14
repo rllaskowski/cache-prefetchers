@@ -227,10 +227,16 @@ class MET(EvictionStrategy):
 def solve_linear_program(probabilities, pages):
     for a, b in probabilities.keys():
         assert math.isclose(probabilities[(a, b)] + probabilities[(b, a)], 1)
-        
+
     n = len(pages)
 
-    c = [1] * n
+    c = [0] * n
+    for u, page_u in enumerate(pages):
+        for v, page_v in enumerate(pages):
+            if page_u == page_v:
+                continue
+
+            c[u] += probabilities[(page_u, page_v)]
 
     # Constraints
     A_ub = []  # Coefficient matrix for inequalities
