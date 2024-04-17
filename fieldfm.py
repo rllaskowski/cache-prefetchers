@@ -177,13 +177,13 @@ def sample_data_point(
             if a not in occurences:
                 r_a = float("inf")
             else:
-                r_a = bisect.bisect_left(occurences[a], t+1)
+                r_a = bisect.bisect_left(occurences[a], t + 1)
                 if r_a == len(occurences[a]):
                     r_a = float("inf")
             if b not in occurences:
                 r_b = float("inf")
             else:
-                r_b = bisect.bisect_left(occurences[b], t+1)
+                r_b = bisect.bisect_left(occurences[b], t + 1)
                 if r_b == len(occurences[b]):
                     r_b = float("inf")
         else:

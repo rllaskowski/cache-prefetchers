@@ -278,6 +278,17 @@ def solve_linear_program(probabilities, pages):
         c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=bounds, method="highs"
     )
 
+    distr = result.x
+
+    for v, page_v in enumerate(pages):
+        s = 0
+        for u, page_u in enumerate(pages):
+            if page_v == page_u:
+                continue
+            s += distr[u] * probabilities[(page_v, page_u)]
+
+        assert 0 <= s <= 0.50001, f"Sum of probabilities for {page_v} is {s}"
+
     return result.x
 
 

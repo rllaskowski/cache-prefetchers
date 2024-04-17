@@ -47,7 +47,7 @@ class Cache:
         self.history.append(copy.deepcopy(self.cache))
 
         if not hit:
-            if len(self.cache) == self.size and address not in self.cache:
+            if len(self.cache) == self.size:
                 n_evicted = self.evict(1, allow_non_eviction=True)
             else:
                 n_evicted = 0
