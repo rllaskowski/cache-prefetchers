@@ -32,6 +32,7 @@ class _FieldAwareFactorizationMachine(torch.nn.Module):
     def __init__(self, field_dims, embed_dim):
         super().__init__()
         self.num_fields = len(field_dims)
+        self.embed_dim = embed_dim
         self.embeddings = torch.nn.ModuleList(
             [
                 torch.nn.Embedding(sum(field_dims), embed_dim)
@@ -52,11 +53,16 @@ class _FieldAwareFactorizationMachine(torch.nn.Module):
 
         x = x + x.new_tensor(self.offsets).unsqueeze(0)
         xs = [self.embeddings[i](x) for i in range(self.num_fields)]
+        # normalize the embeddings
+        #xs = [x * torch.sqrt(torch.tensor(self.embeddings[0].embedding_dim, dtype=torch.float32).to(device)) for x in xs]
         ix = list()
         for i in range(self.num_fields - 1):
             for j in range(i + 1, self.num_fields):
                 ix.append(xs[j][:, i] * xs[i][:, j])
         ix = torch.stack(ix, dim=1)
+        # normalize the embeddings
+        #ix = ix * torch.sqrt(torch.tensor(self.embed_dim, dtype=torch.float32).to(device))
+
         return ix
 
 
@@ -105,10 +111,10 @@ class FieldAwareFactorizationMachineModel(torch.nn.Module):
 
         x = x.to(device)
 
-        x = x % self.n
         ffm_term = torch.sum(torch.sum(self.ffm(x), dim=1), dim=1, keepdim=True)
         x = self.linear(x) + ffm_term
         return torch.sigmoid(x.squeeze(1))
+        # return torch.sigmoid(x.squeeze(1))
 
 
 class FieldAwareFactorizationMachine(nn.Module):

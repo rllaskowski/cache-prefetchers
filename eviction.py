@@ -240,7 +240,7 @@ class MET(EvictionStrategy):
         self.prob_model.on_read(address, is_hit)
 
 
-def solve_linear_program(probabilities, pages):
+def find_dom_distribution(probabilities, pages):
     for a, b in probabilities.keys():
         assert math.isclose(probabilities[(a, b)] + probabilities[(b, a)], 1)
 
@@ -280,7 +280,15 @@ def solve_linear_program(probabilities, pages):
 
     distr = result.x
 
-    for v, page_v in enumerate(pages):
+    for i, p in enumerate(distr):
+        if p < 0 and math.isclose(p, 0, abs_tol=1e-6):
+            distr[i] = 0
+
+    assert math.isclose(sum(distr), 1, abs_tol=1e-6), f"Sum of probabilities is {sum(distr)}"
+    assert all(0 <= p <= 1 for p in distr), f"Invalid probabilities: {distr}"
+
+
+    for _v, page_v in enumerate(pages):
         s = 0
         for u, page_u in enumerate(pages):
             if page_v == page_u:
@@ -289,7 +297,10 @@ def solve_linear_program(probabilities, pages):
 
         assert 0 <= s <= 0.50001, f"Sum of probabilities for {page_v} is {s}"
 
-    return result.x
+    distr_sum = sum(distr)
+    distr = [p / distr_sum for p in distr]
+
+    return distr
 
 
 class DOM(EvictionStrategy):
@@ -320,7 +331,7 @@ class DOM(EvictionStrategy):
                 del probabilities[(a, b)]
 
         cache_list = list(cache.cache)
-        distribution = solve_linear_program(probabilities, cache_list)
+        distribution = find_dom_distribution(probabilities, cache_list)
 
         sampled_pages = random.choices(cache_list, weights=distribution, k=p)
 

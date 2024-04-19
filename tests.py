@@ -2,7 +2,7 @@ from os import replace
 
 
 from torch import cudnn_convolution_add_relu
-from eviction import solve_linear_program
+from eviction import find_dom_distribution
 import random
 from pprint import pprint
 import functools
@@ -23,7 +23,7 @@ def test_dom():
                 probs[(i, j)] = random.random()
                 probs[(j, i)] = 1 - probs[(i, j)]
 
-        distr = solve_linear_program(probs, pages)
+        distr = find_dom_distribution(probs, pages)
         assert distr is not None
         # pprint(probs)
         s = {}
@@ -84,7 +84,7 @@ def test_dom2():
     for i in tqdm.tqdm(range(SAMPLES)):
         cache = random.sample(pages, k=cache_size)
 
-        probs_dom = solve_linear_program(prob_c, cache)
+        probs_dom = find_dom_distribution(prob_c, cache)
         t = random.randint(0, len(sequence))
 
         w = random.choices(cache, k=1, weights=probs_dom)[0]

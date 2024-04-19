@@ -5,7 +5,6 @@ from math import e
 from collections import defaultdict
 import re
 from IPython import embed
-from matplotlib.pylab import f
 from sympy import Q, field, im, li
 import torch
 from dataclasses import dataclass
@@ -19,12 +18,12 @@ import bisect
 import itertools
 import copy
 import tqdm
-import math
+
 import cache
 from fieldfm import FieldAwareFactorizationMachineModel
 
 
-def _to_tensor_batched(x: any, batch_dims: int) -> torch.Tensor:
+def to_tensor_batched(x, batch_dims):
     if not isinstance(x, torch.Tensor):
         x = torch.tensor(x)
 
@@ -34,43 +33,19 @@ def _to_tensor_batched(x: any, batch_dims: int) -> torch.Tensor:
     return x
 
 
-class FFM(nn.Module):
+class Early(nn.Module):
     def __init__(
         self,
         n_pages,
         cache_size,
         history_size,
         emb_size,
-        *args,
-        **kwargs,
-    ):
-        super().__init__()
-        self.n_dims = []
-
-        self.ffm = FieldAwareFactorizationMachineModel(
-            field_dims=[n_pages] * (history_size + 2), embed_dim=emb_size
-        )
-
-    def forward(self, a, delta_a, b, delta_b, history, delta_history):
-        a = _to_tensor_batched(a, 1).unsqueeze(1)
-        b = _to_tensor_batched(b, 1).unsqueeze(1)
-        history = _to_tensor_batched(history, 2)
-        ffm_input = torch.cat([a, b, history], dim=1)
-
-        return self.ffm(ffm_input)
-
-
-class Early(nn.Module):
-    def __init__(
-        self,
-        n_pages,
-        emb_size,
         delta_emb_size,
         hidden_size,
+        output_size,
         n_deltas=100,
         dropout=0.1,
         train_next_delta=False,
-        **kwargs,
     ):
         super().__init__()
         self.hidden_size = hidden_size
@@ -98,20 +73,15 @@ class Early(nn.Module):
         for layer in [self.query, self.key, self.ff1, self.ff2]:
             torch.nn.init.xavier_uniform_(layer.weight.data)
 
-    def forward(self, a, delta_a, b, delta_b, history, delta_history):
-        a = _to_tensor_batched(a, 1)
-        b = _to_tensor_batched(b, 1)
-        delta_a = _to_tensor_batched(delta_a, 1)
-        delta_b = _to_tensor_batched(delta_b, 1)
-        history = _to_tensor_batched(history, 2)
-        delta_history = _to_tensor_batched(delta_history, 2)
+    def forward(self, cache, cache_delta, history, delta_history):
+        cache = to_tensor_batched(cache, 1)
+        cache_delta = to_tensor_batched(cache_delta, 1)
+        history = to_tensor_batched(history, 2)
+        delta_history = to_tensor_batched(delta_history, 2)
 
-        emb_a = torch.cat(
-            [self.embedding(a), self.delta_embedding(delta_a)], dim=1
-        ).unsqueeze(1)
-        emb_b = torch.cat(
-            [self.embedding(b), self.delta_embedding(delta_b)], dim=1
-        ).unsqueeze(1)
+        emb_cache = torch.cat(
+            [self.embedding(cache), self.delta_embedding(cache_delta)], dim=2
+        )
 
         history_emb = torch.cat(
             [self.embedding(history), self.delta_embedding(delta_history)], dim=2
@@ -128,13 +98,13 @@ class Early(nn.Module):
 
         # history_hidden = history_hn
         # history_hidden = history_emb
-        query_a_b = self.query(torch.cat([emb_a, emb_b], dim=1))
+        query_cache = self.query(emb_cache)
         # query_a_b = torch.cat([emb_a, emb_b], dim=1)
         # query_a_b = self.dropout(history_hidden)
 
         # key = self.layer_norm(history_hidden)
         key = history_hidden
-        scores = query_a_b @ key.transpose(1, 2)
+        scores = query_cache @ key.transpose(1, 2)
         scores /= torch.sqrt(torch.tensor(self.hidden_size).float())
         out = scores.squeeze(-1)
 
@@ -175,21 +145,8 @@ class Mapping:
         return self.map(key)
 
 
-def to_delta_sequence(sequence: list[int], addr: int) -> list[int]:
+def to_delta_sequence(sequence, addr):
     return [s - addr for s in sequence]
-
-
-def get_first_occurance(occurences: list[int], min_t: int) -> int:
-    idx = bisect.bisect_left(occurences, min_t)
-    if idx == len(occurences):
-        return float("inf")
-
-    occ = occurences[idx]
-    next_occ = occurences[idx + 1] if idx + 1 < len(occurences) else float("inf")
-
-    assert min_t <= occ < next_occ, f"min_t: {min_t}, occ: {occ}"
-
-    return occ
 
 
 def get_samples(
@@ -209,18 +166,16 @@ def get_samples(
 
     while len(samples) < n_samples:
         t = random.randint(
-            max(T - 2 - interval * 2 + 1, history_size), T - 2 - interval
+            max(T - 2 - interval * 3 + 1, history_size), T - 2 - 2 * interval
         )
 
         cache_t = cache_history[t]
-        # randomly permute the cache
-        cache_t = random.sample(cache_t, len(cache_t))
 
         if len(cache_t) < 2:
             continue
 
         last_addr = sequence[t]
-        history_t = sequence[t + 1 - history_size: t + 1]
+        history_t = sequence[t - history_size + 1 : t + 1]
 
         history_t_mapped = addr_mapping(history_t)
         delta_history_t = to_delta_sequence(history_t, last_addr)
@@ -230,31 +185,20 @@ def get_samples(
         delta_cache_t = to_delta_sequence(cache_t, last_addr)
         delta_cache_t_mapped = delta_mapping(delta_cache_t)
 
-        a_i, b_i = random.sample(range(len(cache_t)), 2)
+        first_occ = {}
+        found = {}
+        for addr_mapped in cache_t_mapped:
+            first_occ[addr_mapped] = bisect.bisect_left(
+                occurences[addr_mapped], t+1
+            )
+            if first_occ[addr_mapped] is None or 
 
-        a_mapped = cache_t_mapped[a_i]
-        b_mapped = cache_t_mapped[b_i]
 
-        a_delta_mapped = delta_cache_t_mapped[a_i]
-        b_delta_mapped = delta_cache_t_mapped[b_i]
-
-        a_first_occ = get_first_occurance(occurences[a_mapped], t + 1)
-        b_first_occ = get_first_occurance(occurences[b_mapped], t + 1)
-
-        if a_first_occ < b_first_occ:
-            y = 1
-        elif a_first_occ == b_first_occ:
-            # continue
-            y = 0.5
-        else:
-            y = 0
 
         samples.append(
             {
-                "a": a_mapped,
-                "b": b_mapped,
-                "delta_a": a_delta_mapped,
-                "delta_b": b_delta_mapped,
+                ":cache": cache_t_mapped,
+                "cache_delta": delta_cache_t_mapped,
                 "history": history_t_mapped,
                 "delta_history": delta_history_t_mapped,
                 "next_delta": delta_mapping(sequence[t + 1] - last_addr),
@@ -281,17 +225,17 @@ def train_model(
     loss_a_b_sum = 0
     loss_delta_sum = 0
     random_loss_sum = 0
-    criterion_a_b = nn.BCEWithLogitsLoss()
+    criterion_a_b = nn.BCELoss()
     criterion_delta = nn.CrossEntropyLoss()
 
-    model.train()
     for i in range(0, len(samples), batch_size):
         batch = to_batched_dict(samples[i : i + batch_size])
         prob_target = torch.tensor(batch.pop("prob")).float()
 
         next_delta = batch.pop("next_delta")
 
-
+        optimizer.zero_grad()
+        model.train()
         model_out = model(**batch)
         random_model_out = torch.rand_like(prob_target)
 
@@ -314,14 +258,8 @@ def train_model(
             loss += 0.5 * loss_delta
             loss_delta_sum += loss_delta.item()
 
-
         loss.backward()
         optimizer.step()
-
-    batches = math.ceil(len(samples) / batch_size)
-    loss_a_b_sum /= batches
-    loss_delta_sum /= batches
-    random_loss_sum /= batches
 
     return loss_a_b_sum, loss_delta_sum, random_loss_sum
 
@@ -346,8 +284,7 @@ def test_on_sequence(
     batch_size=32,
     train_next_delta=False,
     hash_mapping=False,
-    model_class="ffm",
-    from_model=None,
+    model_class='ffm'
 ):
     delta_mapping = Mapping(n_deltas, hash_mapping)
     addr_mapping = Mapping(n_pages, hash_mapping)
@@ -359,18 +296,15 @@ def test_on_sequence(
         delta_emb_size=delta_emb_size,
         hidden_size=hidden_size,
         n_deltas=n_deltas,
-        dropout=dropout,
+        drouput=dropout,
         train_next_delta=train_next_delta,
     )
-    if from_model is not None:
-        model = from_model
+    if model_class == 'ffm':
+        model = FFM(**model_config)
     else:
-        if model_class == "ffm":
-            model = FFM(**model_config)
-        else:
-            model = Early(**model_config)
+        model = Early(**model_config)
 
-    optimizer = torch.optim.Adagrad(model.parameters(), lr=lr, weight_decay=wd)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=wd)
 
     misses = 0
     misses_history = []
@@ -385,7 +319,6 @@ def test_on_sequence(
 
     def get_to_evict(t) -> int:
         model_input = []
-
         cache_tuple = cache_history[t]
 
         for a, b in itertools.combinations(cache_tuple, 2):
@@ -413,17 +346,17 @@ def test_on_sequence(
                 }
             )
 
-        model.eval()
         with torch.no_grad():
+            model.eval()
             probs = model(**to_batched_dict(model_input))
             probs = probs.tolist()
 
-        pair_probabilities = {}
+        linear_program_input = {}
         for (a, b), prob in zip(itertools.combinations(cache_tuple, 2), probs):
-            pair_probabilities[(a, b)] = prob
-            pair_probabilities[(b, a)] = 1 - prob
+            linear_program_input[(a, b)] = prob
+            linear_program_input[(b, a)] = 1 - prob
 
-        distr = find_dom_distribution(pair_probabilities, cache_tuple)
+        distr = find_dom_distribution(linear_program_input, cache_tuple)
 
         if greedy:
             to_evict_idx = np.argmax(distr)
@@ -449,7 +382,7 @@ def test_on_sequence(
 
         misses_history.append(misses)
 
-        if t % train_interval == 0 and t >= train_interval * 2:
+        if t % train_interval == 0 and t >= train_interval * 3:
             samples = get_samples(
                 sequence,
                 t,
@@ -481,4 +414,4 @@ def test_on_sequence(
             f"Random loss: {random_losses[-1] if random_losses else 0}"
         )
 
-    return misses, misses_history, losses_a_b, evict_counts, model
+    return misses, misses_history, losses_a_b, evict_counts
