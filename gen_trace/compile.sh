@@ -1,1 +1,1 @@
-clang++ -o main main.cpp
+clang++ -O0 -o main main.cpp

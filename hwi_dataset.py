@@ -1,10 +1,12 @@
 import glob
+from math import e
 import os
 from typing import Dict, List, Tuple
-
+import sys
 import numpy as np
 import pandas as pd
-
+from sympy import E
+import operator
 
 def path_sorting_fn(path):
     path = (
@@ -51,11 +53,17 @@ def read_trace(file_path: str) -> pd.DataFrame:
         df = df.drop(columns=filter(lambda x: "Unnamed" in x, df.columns))
     df = df.map(lambda x: x.strip() if type(x) == str else x)
 
+    if df.iloc[-1].isnull().any():
+        df = df.iloc[:-1]
+
+    df["objId"] = df["objId"].map(lambda x: int(x, 16))
+    df["objLba"] = df["objLba"].map(lambda x: int(x))
+    df["length"] = df["length"].map(lambda x: int(x))
     return df
 
 
 def get_reads(df) -> np.ndarray:
-    return df[df["tp"] == "READ"][["objLba", "length"]].values
+    return df[df["tp"] == "READ"][["objId", "objLba", "length", "last time nano"]].values
 
 
 def get_test_set() -> Dict[str, List[str]]:
@@ -82,4 +90,19 @@ def get_page_requests(
             addr += page_size
             length -= page_size
 
+    return requests
+
+
+
+def get_hwi_page_requests(
+    read_trace: List[Tuple[int, int, int]], page_size=16 * 1024
+) -> List[int]:
+    requests = []
+
+    for obj_id, obj_lba, length, t in read_trace:
+        length *= 512
+        start_page = int(obj_lba // page_size)
+        end_page = int(obj_lba + length - 1) // page_size
+        for page in range(start_page, end_page + 1):
+            requests.append(page * 256 + obj_id)
     return requests

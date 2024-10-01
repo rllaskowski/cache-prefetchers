@@ -54,7 +54,7 @@ class _FieldAwareFactorizationMachine(torch.nn.Module):
         x = x + x.new_tensor(self.offsets).unsqueeze(0)
         xs = [self.embeddings[i](x) for i in range(self.num_fields)]
         # normalize the embeddings
-        #xs = [x * torch.sqrt(torch.tensor(self.embeddings[0].embedding_dim, dtype=torch.float32).to(device)) for x in xs]
+
         ix = list()
         for i in range(self.num_fields - 1):
             for j in range(i + 1, self.num_fields):
@@ -71,6 +71,8 @@ class FeaturesLinear(torch.nn.Module):
         super().__init__()
         self.fc = torch.nn.Embedding(sum(field_dims), output_dim)
         self.bias = torch.nn.Parameter(torch.zeros((output_dim,)))
+        self.ff1 = torch.nn.Linear(len(field_dims)*output_dim, 16)
+        self.ff2 = torch.nn.Linear(16, 1)
         self.offsets = np.array((0, *np.cumsum(field_dims)[:-1]), dtype="int64")
 
     def forward(self, x):
@@ -83,7 +85,10 @@ class FeaturesLinear(torch.nn.Module):
 
         assert x.device == device, f"linear: {x.device} != {device}"
         x = x + x.new_tensor(self.offsets).unsqueeze(0)
-        return torch.sum(self.fc(x), dim=1) + self.bias
+        x = self.fc(x).view(x.size(0), -1)
+        x = self.ff1(x)
+        x = self.ff2(torch.relu(x))
+        return x
 
 
 class FieldAwareFactorizationMachineModel(torch.nn.Module):
@@ -96,7 +101,7 @@ class FieldAwareFactorizationMachineModel(torch.nn.Module):
 
     def __init__(self, field_dims, embed_dim):
         super().__init__()
-        self.linear = FeaturesLinear(field_dims)
+        self.linear = FeaturesLinear(field_dims, output_dim=4)
         self.ffm = _FieldAwareFactorizationMachine(field_dims, embed_dim)
         self.n = field_dims[0]
 
@@ -112,7 +117,7 @@ class FieldAwareFactorizationMachineModel(torch.nn.Module):
         x = x.to(device)
 
         ffm_term = torch.sum(torch.sum(self.ffm(x), dim=1), dim=1, keepdim=True)
-        x = self.linear(x) + ffm_term
+        x = ffm_term # + self.linear(x) +
         return torch.sigmoid(x.squeeze(1))
         # return torch.sigmoid(x.squeeze(1))
 
